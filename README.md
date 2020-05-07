@@ -7,6 +7,9 @@ Menu
 
 - **Menu**()
 	- ***List<String[]>*** menu_list
+
+----------
+
 Menu\_list
 -
 - ***String*** url
@@ -14,11 +17,19 @@ Menu\_list
 - ***List<String[]>*** child\_list
 	- return index(`id`) of text_list
 - ***Child_list*** child(***int*** `id`)
-	- return index(`id`) of child_list 
+	- return index(`id`) of child_list
+
+
+----------
+ 
 Child\_list
 -
 - ***String*** url
 - ***String*** text
+
+
+----------
+
 
 Film 
 -
@@ -34,11 +45,16 @@ Film
 		- `order`:"vod\_addtime","vod\_hits","vod\_hits\_month","vod\_hits\_day","vod\_hits\_week","vod\_gold","vod\_golder","vod\_up"
 - ***Film_list*** film(int `id`)
 	- return index(`id`) of film_list
+
+----------
+
 Film\_list
 -
 - ***String*** url
 - ***String*** text
 - ***String*** imsrc
+
+----------
 
 Episode 
 -
@@ -47,10 +63,14 @@ Episode
 - ***Child_list*** episode(***int*** `id`)
 	- return index(`id`) of episode_list
 
+----------
+
 M3u8
 -
 - **M3u8**(***String*** `url`)
 	- ***String*** url
+
+----------
 
 Search 
 -
@@ -58,6 +78,8 @@ Search
 	- **List<String[]>** film\_list
 - ***Film_list*** film(int `id`)
 	- return index(`id`) of film_list
+
+----------
 
 
 
