@@ -1,0 +1,3 @@
+rootProject.name='Watch_video_java'
+include ':app'
+include ':lib'
