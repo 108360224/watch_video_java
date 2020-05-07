@@ -22,7 +22,14 @@ public class M3u8{
         String t=script.data();
         Matcher matcher = pattern.matcher(script.data());
         matcher.find();
-        this.url=matcher.group(0);
-        this.url=this.url.replaceAll("\\\\","");
+        try{
+            this.url=matcher.group(0);
+            this.url=matcher.group(0);
+            this.url=this.url.replaceAll("\\\\","");
+        }
+        catch (Exception e){
+            this.url="not exit";
+        }
+
     }
 }
