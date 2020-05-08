@@ -67,8 +67,9 @@ Episode
 
 M3u8
 -
-- **M3u8**(***String*** `url`)
-	- ***String*** url
+- static ***String*** get\_m3u8(***String*** `url`)
+	- return http://......index.m3u8
+	- if not exit return "not exit"
 
 ----------
 

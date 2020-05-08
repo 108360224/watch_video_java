@@ -10,7 +10,8 @@ import java.util.regex.Pattern;
 
 public class M3u8{
     public String url;
-    public M3u8(String URL){
+    public static String get_m3u8(String URL){
+        String url;
         Document doc = null;
         try {
             doc = Jsoup.connect("http://www.99kubo.tv"+URL).get();
@@ -23,13 +24,12 @@ public class M3u8{
         Matcher matcher = pattern.matcher(script.data());
         matcher.find();
         try{
-            this.url=matcher.group(0);
-            this.url=matcher.group(0);
-            this.url=this.url.replaceAll("\\\\","");
+            url=matcher.group(0);
+            url=url.replaceAll("\\\\","");
         }
         catch (Exception e){
-            this.url="not exit";
+            url="not exit";
         }
-
+        return url;
     }
 }
