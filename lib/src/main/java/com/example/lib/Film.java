@@ -25,7 +25,7 @@ public class Film {
         this.URL="http://www.99kubo.tv/"+a.attr("href");
         this.film_list=load(this.URL);
     }
-    Film_list film(int i){
+    public Film_list film(int i){
         return new Film_list(film_list.get(i));
     }
     public void sort_by(String sort){

@@ -13,7 +13,7 @@ public class Menu_list{
         this.text=menu_list[0];
         this.child_list=child_list;
     }
-    Child_list child(int i){
+    public Child_list child(int i){
         return new Child_list(this.child_list.get(i));
     }
 }

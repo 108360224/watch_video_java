@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 public class Episode{
     public List<String[]> episode_list=new ArrayList<>();;
-    Episode(String URL){
+    public Episode(String URL){
         Document doc = null;
         try {
             doc = Jsoup.connect("http://www.99kubo.tv"+URL).get();

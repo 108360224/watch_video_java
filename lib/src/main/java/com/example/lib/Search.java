@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 public class Search{
     public List<String[]> film_list = new ArrayList<>();
-    Search(String keyword){
+    public Search(String keyword){
         String word=keyword.replaceAll(" ","%20");
         Document doc = null;
         try {
