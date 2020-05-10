@@ -4,6 +4,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.*;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -31,5 +34,55 @@ public class M3u8{
             url="not exit";
         }
         return url;
+    }
+
+    public static M3u8_list get_m3u8_list(String theUrl){
+        Time time=new Time(0);
+        M3u8_list m3u8_list=new M3u8_list();
+        get_m3u8_content(theUrl,m3u8_list,time);
+        return m3u8_list;
+    }
+    private static void get_m3u8_content(String theUrl, M3u8_list m3u8_list,Time time){
+
+
+        try {
+            URL url = new URL(theUrl);
+
+            URLConnection urlConnection = url.openConnection();
+
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+            String line;
+
+            while ((line = bufferedReader.readLine()) != null)
+            {
+                if(line.contains("m3u8")){
+                    String s=theUrl.replaceAll("index\\.m3u8","")+line;
+                    get_m3u8_content(s,m3u8_list,time);
+                }
+                else if(line.contains("RESOLUTION")){
+                    String s=line.replaceAll(".+RESOLUTION=","");
+                    m3u8_list.size=s;
+                }
+                else if(line.contains("#EXTINF")){
+                    String s=line.replaceAll("#EXTINF:|,","");
+                    time.i+=Float.parseFloat(s);
+                    m3u8_list.time_list.add(time.i);
+                }
+                else if(!line.contains("#EXT")){
+                    String s=theUrl.replaceAll("index\\.m3u8","")+line;
+                    m3u8_list.url_list.add(s);
+                }
+            }
+            bufferedReader.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+}
+class Time{
+    float i;
+    Time(float i){
+        this.i=i;
     }
 }
