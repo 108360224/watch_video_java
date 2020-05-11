@@ -12,6 +12,8 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.MediaController;
 import android.widget.ProgressBar;
+import android.widget.Space;
+import android.widget.TextView;
 import android.widget.VideoView;
 
 import android.graphics.drawable.Drawable;
@@ -24,6 +26,7 @@ import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.exoplayer2.ui.SubtitleView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
@@ -46,18 +49,21 @@ public class MainActivity extends AppCompatActivity {
         ImageButton resume=(ImageButton)findViewById(R.id.exo_play);
         ImageButton next_video=(ImageButton)findViewById(R.id.exo_next);
         ImageButton prev_video=(ImageButton)findViewById(R.id.exo_prev);
-        ImageButton forward=(ImageButton)findViewById(R.id.exo_ffwd);
-        ImageButton reward=(ImageButton)findViewById(R.id.exo_rew);
         ProgressBar buffering = (ProgressBar) findViewById(R.id.progressBar);
+        TextView title=(TextView)findViewById(R.id.title);
+        Space space=(Space)findViewById(R.id.space);
+        space.setMinimumHeight(10);
         final String url="http://iqiyi.cdn9-okzy.com/20200425/9496_b7642f6c/index.m3u8";
         PlayerView playerView = findViewById(R.id.PlayerView);
 
-        player=new VideoPlayer(playerView,buffering);
-        player.addvideo(url);
-        player.addvideo("https://iqiyi.cdn9-okzy.com/20200412/8695_d2f1e49b/index.m3u8");
-
-        player.addvideo(url);
+        player=new VideoPlayer(playerView);
+        player.add_buffering(buffering);
+        player.add_TextView(title);
+        player.add_video(url,"title1");
+        player.add_video("https://iqiyi.cdn9-okzy.com/20200412/8695_d2f1e49b/index.m3u8","title2");
         player.start();
+        player.add_video(url,"title3");
+
         pause.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 player.pause();
@@ -70,7 +76,6 @@ public class MainActivity extends AppCompatActivity {
         });
         next_video.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                //player.addvideo("https://iqiyi.cdn9-okzy.com/20200412/8695_d2f1e49b/index.m3u8");
                 player.next_video();
             }
         });
@@ -79,16 +84,7 @@ public class MainActivity extends AppCompatActivity {
                 player.prev_video();
             }
         });
-        reward.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                player.shift_time(-10000);
-            }
-        });
-        forward.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                player.shift_time(10000);
-            }
-        });
+
         /*
         next_video.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
