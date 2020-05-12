@@ -15,43 +15,49 @@
 -->
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <com.google.android.exoplayer2.ui.AspectRatioFrameLayout android:id="@id/exo_content_frame"
+    <com.google.android.exoplayer2.ui.AspectRatioFrameLayout
+        android:id="@id/exo_content_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center">
 
         <!-- Video surface will be inserted as the first child of the content frame. -->
 
-        <View android:id="@id/exo_shutter"
+        <View
+            android:id="@id/exo_shutter"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/black"/>
+            android:background="@android:color/black" />
 
-        <ImageView android:id="@id/exo_artwork"
+        <ImageView
+            android:id="@id/exo_artwork"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="fitXY"/>
+            android:scaleType="fitXY" />
 
         <com.google.android.exoplayer2.ui.SubtitleView
             android:id="@id/exo_subtitles"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <TextView android:id="@id/exo_error_message"
+        <TextView
+            android:id="@id/exo_error_message"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:gravity="center"
             android:background="@color/exo_error_message_background_color"
-            android:padding="16dp"/>
+            android:gravity="center"
+            android:padding="16dp" />
+
 
         <ProgressBar
-            android:id="@id/exo_buffering"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:id="@+id/progressBar"
+            style="@android:style/Widget.DeviceDefault.Light.ProgressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:background="#000000"
-            android:indeterminate="true" />
+            android:indeterminate="true"
+            android:visibility="visible" />
 
     </com.google.android.exoplayer2.ui.AspectRatioFrameLayout>
 

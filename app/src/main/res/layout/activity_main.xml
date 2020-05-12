@@ -7,27 +7,12 @@
     tools:context=".MainActivity">
 
 
-
-    <com.google.android.exoplayer2.ui.PlayerView
-        android:id="@+id/PlayerView"
-        android:layout_width="match_parent"
+    <fragment
+        android:id="@+id/fragment1"
+        android:name="com.example.watch_video_java.VideoPlayer.VideoPlayerActivity"
+        android:layout_width="0dip"
         android:layout_height="match_parent"
-        android:background="#000000"
-        app:controller_layout_id="@layout/exo_playback_control_view"
-        app:player_layout_id="@layout/exo_simple_player_view">
-
-        <ProgressBar
-            android:id="@+id/progressBar"
-            style="@android:style/Widget.DeviceDefault.Light.ProgressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:indeterminate="false"
-            android:progressDrawable="@android:drawable/btn_star_big_on"
-            android:visibility="visible" />
-
-
-    </com.google.android.exoplayer2.ui.PlayerView>
-
+        android:layout_weight="1"
+        tools:ignore="MissingConstraints" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

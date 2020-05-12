@@ -16,6 +16,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/playback_control"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="bottom"
@@ -39,6 +40,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:includeFontPadding="true"
             android:textColor="#FFFFFF"
             app:autoSizeMaxTextSize="24sp"
             app:autoSizeMinTextSize="12sp"
@@ -49,11 +51,9 @@
     </LinearLayout>
 
     <Space
-        android:id="@+id/space"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="20"
-        android:alpha="0" />
+        android:layout_weight="20" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -64,7 +64,9 @@
         android:alpha="1"
         android:background="#80000000"
         android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:scrollbarThumbHorizontal="@android:color/black"
+        android:scrollbarThumbVertical="@color/exo_error_message_background_color">
 
         <ImageButton
             android:id="@id/exo_prev"
@@ -106,12 +108,28 @@
             app:autoSizeStepGranularity="2sp"
             app:autoSizeTextType="uniform" />
 
-        <View
-            android:id="@id/exo_progress_placeholder"
-            android:layout_width="0dp"
+        <com.google.android.exoplayer2.ui.DefaultTimeBar
+            android:id="@id/exo_progress"
+            android:layout_width="match_parent"
             android:layout_height="10dp"
             android:layout_weight="1"
-            android:background="#673AB7" />
+            android:background="#00FFFFFF"
+            android:fadeScrollbars="false"
+            android:scrollbarAlwaysDrawHorizontalTrack="false"
+            android:scrollbarAlwaysDrawVerticalTrack="false"
+            android:scrollbarSize="4dp"
+            android:scrollbarThumbHorizontal="@drawable/ic_launcher_foreground"
+            android:scrollbarThumbVertical="@drawable/ic_launcher_foreground"
+            android:scrollbarTrackHorizontal="@mipmap/ic_launcher"
+            android:scrollbarTrackVertical="@mipmap/ic_launcher"
+            app:ad_marker_color="#00FFFFFF"
+            app:bar_height="20dp"
+            app:buffered_color="#8E8787"
+            app:played_color="#4BCCFF"
+            app:scrubber_disabled_size="0dp"
+            app:scrubber_dragged_size="0dp"
+            app:scrubber_enabled_size="0dp"
+            app:unplayed_color="#80FFFFFF" />
 
         <TextView
             android:id="@id/exo_duration"

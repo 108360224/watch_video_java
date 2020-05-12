@@ -1,23 +1,15 @@
-package com.example.watch_video_java;
+package com.example.watch_video_java.VideoPlayer;
 
 import android.content.Context;
 import android.net.Uri;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.example.lib.Episode;
-import com.example.lib.Film;
-import com.example.lib.M3u8;
-import com.example.lib.Menu;
-import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
-import com.google.android.exoplayer2.text.Cue;
 import com.google.android.exoplayer2.ui.PlayerView;
-import com.google.android.exoplayer2.ui.SubtitleView;
-import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.Util;
@@ -57,8 +49,9 @@ public class VideoPlayer {
     void pause(){
         this.player.setPlayWhenReady(false);
         Log.d("on","pause");
+        setspeed(1);
     }
-    void resume(){
+    void play(){
         this.player.setPlayWhenReady(true);
         Log.d("on","play");
     }
@@ -95,8 +88,8 @@ public class VideoPlayer {
         }
 
     }
-    void shift_time(long shift){
-        player.seekTo(player.getCurrentPosition()+shift);
+    void shift_time(int index,long shift){
+        player.seekTo(index,player.getCurrentPosition()+shift);
     }
 
     void setspeed(float speed){

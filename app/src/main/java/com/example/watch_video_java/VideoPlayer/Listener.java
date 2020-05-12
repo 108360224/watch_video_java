@@ -1,4 +1,4 @@
-package com.example.watch_video_java;
+package com.example.watch_video_java.VideoPlayer;
 
 import android.util.Log;
 import android.view.View;

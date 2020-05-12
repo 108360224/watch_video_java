@@ -42,3 +42,7 @@ dependencies {
 tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
 }
+
+dependencies {
+    implementation 'androidx.legacy:legacy-support-v4:+'
+}
