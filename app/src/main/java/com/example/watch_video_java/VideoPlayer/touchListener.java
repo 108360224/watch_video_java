@@ -102,8 +102,10 @@ public class touchListener implements View.OnTouchListener {
 
                     if(isbeclick){
                         if(playback_control.getVisibility()==View.VISIBLE){
-                            playback_control.setVisibility(View.INVISIBLE);
+                            playback_control.setVisibility(View.GONE);
                         }else if(playback_control.getVisibility()==View.INVISIBLE){
+                            playback_control.setVisibility(View.VISIBLE);
+                        }else if(playback_control.getVisibility()==View.GONE){
                             playback_control.setVisibility(View.VISIBLE);
                         }
 

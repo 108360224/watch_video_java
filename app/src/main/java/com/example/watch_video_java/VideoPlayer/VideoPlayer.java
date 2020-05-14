@@ -3,6 +3,8 @@ package com.example.watch_video_java.VideoPlayer;
 import android.accounts.NetworkErrorException;
 import android.content.Context;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,11 +30,11 @@ import com.google.android.exoplayer2.util.Util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.LogRecord;
 
 public class VideoPlayer {
     private PlayerView playerView;
     private SimpleExoPlayer player;
-    private ProgressBar buffering;
     private TextView title;
     private ConcatenatingMediaSource video_list=new ConcatenatingMediaSource();
     private int video_index=0;
@@ -40,10 +42,13 @@ public class VideoPlayer {
     private DefaultHttpDataSourceFactory dataSourceFactory;
     private List<String> title_list=new ArrayList<>();
     private Episode episode;
-    private Thread thread;
-    private Listener listener;
     private Boolean m3u8_exit=false;
+    private Handler workHandler;
+    private HandlerThread mHandlerThread;
     VideoPlayer(PlayerView playerView){
+        mHandlerThread = new HandlerThread("handlerThread");
+        mHandlerThread.start();
+        workHandler = new Handler(mHandlerThread.getLooper()) ;
 
         this.playerView=playerView;
         this.dataSourceFactory =
@@ -54,7 +59,7 @@ public class VideoPlayer {
         SimpleExoPlayer player = new SimpleExoPlayer
                                         .Builder(context)
                                         .build();
-
+        playerView.setControllerShowTimeoutMs(0);
         this.player=player;
 
 
@@ -141,13 +146,8 @@ public class VideoPlayer {
         if(m3u8_exit==false){
             Toast.makeText(playerView.getContext(), "video not exit", Toast.LENGTH_SHORT).show();
         }else{
-            thread = new Thread(add_video_thread);
-            thread.start();
-            try {
-                thread.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            workHandler.post(add_video_thread);
+
             this.title.setText(episode.episode(video_index).text);
         }
 
@@ -178,8 +178,7 @@ public class VideoPlayer {
 
 
 
-        thread = new Thread(add_video_thread);
-        thread.start();
+        workHandler.post(add_video_thread);
 
 
 
@@ -188,14 +187,8 @@ public class VideoPlayer {
     }
     void jump_to_video(int index){
         video_index=index;
-        thread = new Thread(add_video_thread);
-        thread.start();
+        workHandler.post(add_video_thread);
         this.title.setText(episode.episode(video_index).text);
-        try {
-            thread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         if(video_index>episode.episode_list.size()-2){
             try {
                 player.seekTo(0,0);
@@ -228,8 +221,7 @@ public class VideoPlayer {
 
 
 
-        thread = new Thread(add_video_thread);
-        thread.start();
+        workHandler.post(add_video_thread);
 
     }
     void shift_time(int index,long shift){

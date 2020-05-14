@@ -50,6 +50,7 @@ public class Listener implements Player.EventListener {
                 Log.d("end","Playback ended!");
                 //Stop playback and return to start position
                 //mSimpleExoPlayer.next_video();
+                mSimpleExoPlayer.setPlayWhenReady(false);
                 break;
             case ExoPlayer.STATE_READY:
                 buffering.setVisibility(View.GONE);
@@ -61,7 +62,7 @@ public class Listener implements Player.EventListener {
                 break;
             case ExoPlayer.STATE_IDLE:
                 Log.d("debug","ExoPlayer idle!");
-                mSimpleExoPlayer.retry();
+                //mSimpleExoPlayer.retry();
                 break;
         }
     }

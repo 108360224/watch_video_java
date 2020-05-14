@@ -55,6 +55,16 @@ public class VideoPlayerActivity extends Fragment {
         url = activity.get_ep_url();
         root = inflater.inflate(R.layout.video_player_layout, container, false);
 
+
+        return  root;
+
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState)
+    {
+        // 在這個方法中取得並定義Fragment的介面元件
+        super.onActivityCreated(savedInstanceState);
         ep_list=(LinearLayout)root.findViewById(R.id.ep_list);
         ImageButton pause = (ImageButton) root.findViewById(R.id.exo_pause);
         ImageButton resume = (ImageButton) root.findViewById(R.id.exo_play);
@@ -69,13 +79,16 @@ public class VideoPlayerActivity extends Fragment {
         player = new VideoPlayer(playerView);
         Link_to_episode link_to_episode=new Link_to_episode(url);
         Thread m=new Thread(link_to_episode);
-        m.start();
-        try {
-            m.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+
+        while (episode==null){
+            try{
+                m.start();
+                m.join();
+                episode=link_to_episode.return_episode();
+                Thread.sleep(5000);
+            }catch (Exception e){}
         }
-        episode=link_to_episode.return_episode();
+
         player.get_episode(episode);
         listener=new Listener(player);
         listener.add_buffering(buffering);
@@ -112,16 +125,6 @@ public class VideoPlayerActivity extends Fragment {
         touchListener.add_playback_controll(playback_control);
         touchListener.add_lock_speed_button(button);
         space.setOnTouchListener(touchListener);
-        return  root;
-
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState)
-    {
-        // 在這個方法中取得並定義Fragment的介面元件
-        super.onActivityCreated(savedInstanceState);
-
         //...
     }
     @Override
@@ -137,6 +140,7 @@ public class VideoPlayerActivity extends Fragment {
     private void set_ep_button(){
         for(int i=0;i<episode.episode_list.size();i++){
             Button btn=new Button(root.getContext());
+            btn.setId(i);
             btn.setText(episode.episode(i).text);
             btn.setOnClickListener(new ep_button_onclick(player,i));
             ep_list.addView(btn);
