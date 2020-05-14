@@ -29,6 +29,8 @@ public class touchListener implements View.OnTouchListener {
 
             switch(action) {
                 case MotionEvent.ACTION_DOWN:
+                    Log.d("touch","touchdown");
+                    isbeclick=true;
                     if(mVelocityTracker == null) {
                         // Retrieve a new VelocityTracker object to watch the
                         // velocity of a motion.
@@ -42,7 +44,7 @@ public class touchListener implements View.OnTouchListener {
                     button.setX(event.getX()-200);
                     x=event.getX();
                     y=event.getY();
-                    isbeclick=true;
+
                     issetspeed=false;
                     // Add a user's movement to the tracker.
                     mVelocityTracker.addMovement(event);
@@ -58,12 +60,10 @@ public class touchListener implements View.OnTouchListener {
                     float X_velocity=mVelocityTracker.getXVelocity(pointerId);
                     float Y_velocity=mVelocityTracker.getYVelocity(pointerId);
                     if(Math.abs(X_velocity)>Math.abs(Y_velocity)&&moveup==false){
-                        isbeclick=false;
                         player.shift_time(0,(long)(X_velocity*250));
                         moveleft=true;
                     }else if(moveleft==false){
-                        isbeclick=false;
-                        speed=(y-event.getY())/50;
+                        speed=(y-event.getY())/60;
                         player.setspeed(speed);
                         button.setVisibility(View.VISIBLE);
                         button.setText("x"+String.valueOf(Math.round(speed*10.)/10.));
@@ -75,6 +75,9 @@ public class touchListener implements View.OnTouchListener {
                             b=true;
                         }
                         moveup=true;
+                    }
+                    if(X_velocity>0.5||Y_velocity>0.5){
+                        isbeclick=false;
                     }
 
 

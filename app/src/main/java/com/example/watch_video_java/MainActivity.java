@@ -1,11 +1,14 @@
 package com.example.watch_video_java;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
 import com.example.lib.*;
 import com.example.watch_video_java.VideoPlayer.VideoPlayer;
 
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.view.View;
@@ -20,21 +23,21 @@ import android.util.Log;
 import com.example.watch_video_java.VideoPlayer.VideoPlayerActivity;
 import com.google.android.exoplayer2.ui.PlayerView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends FragmentActivity {
     static final String TAG = "net";
     private VideoPlayer player;
-
+    private String ep_url="/vod-read-id-146948.html";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        /*FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-        VideoPlayerActivity fragment = new VideoPlayerActivity();
-        fragmentTransaction.replace(R.id.ac, mHomeFragment, "HOME");
-        fragmentTransaction.commit();*/
+// set Fragmentclass Arguments
+
         setContentView(R.layout.activity_main);
 
+    }
+    public String get_ep_url() {
+        return ep_url;
     }
     @Override
     protected void onResume() {

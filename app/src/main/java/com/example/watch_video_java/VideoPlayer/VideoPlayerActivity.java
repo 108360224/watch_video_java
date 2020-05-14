@@ -3,10 +3,12 @@ package com.example.watch_video_java.VideoPlayer;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 import com.example.lib.*;
 
 import android.content.res.Configuration;
+import android.os.StrictMode;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
@@ -17,23 +19,43 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Space;
 import android.widget.TextView;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.example.watch_video_java.MainActivity;
 import com.example.watch_video_java.R;
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.PlayerView;
 
 public class VideoPlayerActivity extends Fragment {
-    static final String TAG = "net";
+    private static final String TAG = "net";
     private VideoPlayer player;
+    private Listener listener;
+    private View root;
+    private PlayerView playerView;
+    String url;
+    private Episode episode;
+    private LinearLayout ep_list;
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+
+        super.onCreate(savedInstanceState);
+
+    }
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         getActivity(). getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
-        View root = inflater.inflate(R.layout.video_player_layout, container, false);
+        MainActivity activity = (MainActivity) getActivity();
+        url = activity.get_ep_url();
+        root = inflater.inflate(R.layout.video_player_layout, container, false);
+
+        ep_list=(LinearLayout)root.findViewById(R.id.ep_list);
         ImageButton pause = (ImageButton) root.findViewById(R.id.exo_pause);
         ImageButton resume = (ImageButton) root.findViewById(R.id.exo_play);
         ImageButton next_video = (ImageButton) root.findViewById(R.id.exo_next);
@@ -42,16 +64,29 @@ public class VideoPlayerActivity extends Fragment {
         TextView title = (TextView) root.findViewById(R.id.title);
         Button button = (Button) root.findViewById(R.id.lock_speed);
         LinearLayout playback_control = (LinearLayout) root.findViewById(R.id.playback_control);
-        final String url = "http://iqiyi.cdn9-okzy.com/20200425/9496_b7642f6c/index.m3u8";
-        PlayerView playerView = root.findViewById(R.id.PlayerView);
+        playerView = root.findViewById(R.id.PlayerView);
+        View space=root.findViewById(R.id.space);
         player = new VideoPlayer(playerView);
-        player.add_buffering(buffering);
+        Link_to_episode link_to_episode=new Link_to_episode(url);
+        Thread m=new Thread(link_to_episode);
+        m.start();
+        try {
+            m.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        episode=link_to_episode.return_episode();
+        player.get_episode(episode);
+        listener=new Listener(player);
+        listener.add_buffering(buffering);
         player.add_TextView(title);
-        player.add_video(url, "title1");
-        player.add_video("https://iqiyi.cdn9-okzy.com/20200412/8695_d2f1e49b/index.m3u8", "title2");
-        player.start();
-        player.add_video(url, "title3");
+        player.add_listener(listener);
 
+
+        player.start();
+
+
+        set_ep_button();
         pause.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 player.pause();
@@ -76,7 +111,7 @@ public class VideoPlayerActivity extends Fragment {
         touchListener.add_player(player);
         touchListener.add_playback_controll(playback_control);
         touchListener.add_lock_speed_button(button);
-        playerView.setOnTouchListener(touchListener);
+        space.setOnTouchListener(touchListener);
         return  root;
 
     }
@@ -87,27 +122,57 @@ public class VideoPlayerActivity extends Fragment {
         // 在這個方法中取得並定義Fragment的介面元件
         super.onActivityCreated(savedInstanceState);
 
-        
         //...
     }
-
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FILL);
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+            playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH);
+        }
         // This overrides default action
     }
-
-    private Runnable mutiThread = new Runnable() {
-        public void run() {
-            // 運行網路連線的程式
-            Log.d(TAG,"start");
-            Menu m=new Menu();
-            Film f=new Film(m.menu(1).child(0).url);
-            String s= f.film(0).url;
-            Episode ep =new Episode(f.film(0).url);
-            String ss =ep.episode(0).url;
-            String indexm3u8=M3u8.get_m3u8(ss);
-
+    private void set_ep_button(){
+        for(int i=0;i<episode.episode_list.size();i++){
+            Button btn=new Button(root.getContext());
+            btn.setText(episode.episode(i).text);
+            btn.setOnClickListener(new ep_button_onclick(player,i));
+            ep_list.addView(btn);
         }
-    };
+
+    }
+
+}
+class ep_button_onclick implements Button.OnClickListener{
+    private VideoPlayer player;
+    private int i;
+    public ep_button_onclick(VideoPlayer player,int i){
+        this.player=player;
+        this.i=i;
+    }
+    @Override
+    public void onClick(View v) {
+        player.jump_to_video(i);
+    }
+}
+class Link_to_episode implements Runnable {
+    private String url;
+    private Episode episode;
+    public Link_to_episode(String url){
+        this.url=url;
+    }
+
+
+    public Episode return_episode(){
+        return episode;
+    }
+    @Override
+    public void run() {
+        try {
+            episode=new Episode(url);
+        }catch (Exception e){}
+
+    }
 }

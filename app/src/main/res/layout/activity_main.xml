@@ -6,10 +6,9 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-
     <fragment
         android:id="@+id/fragment1"
-        android:name="com.example.watch_video_java.VideoPlayer.VideoPlayerActivity"
+        class="com.example.watch_video_java.VideoPlayer.VideoPlayerActivity"
         android:layout_width="0dip"
         android:layout_height="match_parent"
         android:layout_weight="1"

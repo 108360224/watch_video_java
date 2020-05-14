@@ -17,15 +17,18 @@ import java.util.Formatter;
 import java.util.Locale;
 
 public class Listener implements Player.EventListener {
-    private SimpleExoPlayer mSimpleExoPlayer;
+    private VideoPlayer mSimpleExoPlayer;
     private ProgressBar buffering;
-    public Listener(SimpleExoPlayer mSimpleExoPlayer,ProgressBar buffering){
+    public Listener(VideoPlayer mSimpleExoPlayer){
         this.mSimpleExoPlayer=mSimpleExoPlayer;
+    }
+    void add_buffering(ProgressBar buffering){
         this.buffering=buffering;
     }
     @Override
     public void onTimelineChanged(Timeline timeline, int reason) {
-        Log.d("debug","onTimelineChanged");
+
+
     }
 
     @Override
@@ -44,10 +47,9 @@ public class Listener implements Player.EventListener {
                 +" playbackState = "+playbackState);
         switch (playbackState){
             case ExoPlayer.STATE_ENDED:
-                Log.d("debug","Playback ended!");
+                Log.d("end","Playback ended!");
                 //Stop playback and return to start position
-                setPlayPause(false);
-                this.mSimpleExoPlayer.seekTo(0);
+                //mSimpleExoPlayer.next_video();
                 break;
             case ExoPlayer.STATE_READY:
                 buffering.setVisibility(View.GONE);
@@ -72,6 +74,7 @@ public class Listener implements Player.EventListener {
     @Override
     public void onPositionDiscontinuity(int reason) {
         Log.d("debug","onPositionDiscontinuity");
+
     }
 
     @Override
