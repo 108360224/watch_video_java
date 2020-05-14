@@ -68,8 +68,8 @@ public class VideoPlayerActivity extends Fragment {
         ep_list=(LinearLayout)root.findViewById(R.id.ep_list);
         ImageButton pause = (ImageButton) root.findViewById(R.id.exo_pause);
         ImageButton resume = (ImageButton) root.findViewById(R.id.exo_play);
-        ImageButton next_video = (ImageButton) root.findViewById(R.id.exo_next);
-        ImageButton prev_video = (ImageButton) root.findViewById(R.id.exo_prev);
+        ImageButton next_video = (ImageButton) root.findViewById(R.id.next);
+        ImageButton prev_video = (ImageButton) root.findViewById(R.id.prev);
         ProgressBar buffering = (ProgressBar) root.findViewById(R.id.progressBar);
         TextView title = (TextView) root.findViewById(R.id.title);
         Button button = (Button) root.findViewById(R.id.lock_speed);
@@ -78,10 +78,11 @@ public class VideoPlayerActivity extends Fragment {
         View space=root.findViewById(R.id.space);
         player = new VideoPlayer(playerView);
         Link_to_episode link_to_episode=new Link_to_episode(url);
-        Thread m=new Thread(link_to_episode);
+
 
         while (episode==null){
             try{
+                Thread m=new Thread(link_to_episode);
                 m.start();
                 m.join();
                 episode=link_to_episode.return_episode();
@@ -97,7 +98,7 @@ public class VideoPlayerActivity extends Fragment {
 
 
         player.start();
-
+        player.jump_to_video(0);
 
         set_ep_button();
         pause.setOnClickListener(new View.OnClickListener() {

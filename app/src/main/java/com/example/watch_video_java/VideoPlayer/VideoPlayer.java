@@ -8,7 +8,7 @@ import android.os.HandlerThread;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import java.util.Calendar;
 import com.example.lib.Episode;
 import com.example.lib.Film;
 import com.example.lib.M3u8;
@@ -40,16 +40,17 @@ public class VideoPlayer {
     private int video_index=0;
     private DefaultTrackSelector trackSelector;
     private DefaultHttpDataSourceFactory dataSourceFactory;
-    private List<String> title_list=new ArrayList<>();
     private Episode episode;
     private Boolean m3u8_exit=false;
     private Handler workHandler;
+    private long last_time;
     private HandlerThread mHandlerThread;
+    private Thread quickClick_thread;
     VideoPlayer(PlayerView playerView){
         mHandlerThread = new HandlerThread("handlerThread");
         mHandlerThread.start();
         workHandler = new Handler(mHandlerThread.getLooper()) ;
-
+        last_time=Calendar.getInstance().getTimeInMillis();
         this.playerView=playerView;
         this.dataSourceFactory =
                 new DefaultHttpDataSourceFactory(Util.getUserAgent(this.playerView.getContext(), "Watch_video_java"));
@@ -85,6 +86,7 @@ public class VideoPlayer {
         setspeed(1);
     }
     void play(){
+
         this.player.setPlayWhenReady(true);
         Log.d("on","play");
     }
@@ -97,34 +99,44 @@ public class VideoPlayer {
         );
     }
     private void add_video(int i){
-        HlsMediaSource hlsMediaSource =
-                new HlsMediaSource.Factory(this.dataSourceFactory).createMediaSource(Uri.parse(M3u8.get_m3u8(episode.episode(i).url)));
+        video_list.clear();
+        HlsMediaSource hlsMediaSource=null;
+        while (hlsMediaSource==null){
+            try {
+                hlsMediaSource =
+                        new HlsMediaSource.Factory(this.dataSourceFactory).createMediaSource(Uri.parse(M3u8.get_m3u8(episode.episode(i).url)));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
         this.video_list.addMediaSource(hlsMediaSource);
-        this.title_list.add(episode.episode(i).text);
+
     }
     private Runnable add_video_thread = new Runnable() {
         public void run() {
-            video_list.clear();
-            if(video_index>0){
-                add_video(video_index-1);
-            }
 
             add_video(video_index);
-            if(video_index<episode.episode_list.size()-1){
-                add_video(video_index+1);
+        }
+    };
+    private Runnable detect_quickClick = new Runnable() {
+        public void run() {
+            while (true){
+                if(Calendar.getInstance().getTimeInMillis()-last_time>2000){
+                    workHandler.post(add_video_thread);
+                    break;
+                }
             }
 
         }
     };
     private Runnable check_m3u8 = new Runnable() {
         public void run() {
-            if(M3u8.get_m3u8(episode.episode(0).url)=="not exit"){
-                m3u8_exit=false;
-            }else{
-                m3u8_exit=true;
-            }
-
+        if(M3u8.get_m3u8(episode.episode(0).url)=="not exit"){
+            m3u8_exit=false;
+        }else{
+            m3u8_exit=true;
+        }
         }
     };
     void add_listener(Listener listener){
@@ -141,87 +153,49 @@ public class VideoPlayer {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
-
         if(m3u8_exit==false){
             Toast.makeText(playerView.getContext(), "video not exit", Toast.LENGTH_SHORT).show();
-        }else{
-            workHandler.post(add_video_thread);
-
-            this.title.setText(episode.episode(video_index).text);
         }
-
-
-
     }
     void next_video() {
-        if(video_index==0||video_index>episode.episode_list.size()-2){
-            try {
-                player.seekTo(1,0);
-            }catch (Exception e){
-                Toast.makeText(playerView.getContext(), "loading... tap too fast", Toast.LENGTH_SHORT).show();
-            }
-
-        }else{
-            try {
-                player.seekTo(2,0);
-            }catch (Exception e){
-                Toast.makeText(playerView.getContext(), "tap too fast", Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        if(video_index<episode.episode_list.size()-1){
+        if(video_index+1<=episode.episode_list.size()-1){
             this.video_index++;
+            jump_to_video(this.video_index);
+
             this.title.setText(episode.episode(video_index).text);
+        }else{
+            Toast.makeText(playerView.getContext(), "final", Toast.LENGTH_SHORT).show();
         }
-
-
-
-
-        workHandler.post(add_video_thread);
-
-
-
-
-
     }
+    private Boolean isthread_start=false;
     void jump_to_video(int index){
         video_index=index;
-        workHandler.post(add_video_thread);
         this.title.setText(episode.episode(video_index).text);
-        if(video_index>episode.episode_list.size()-2){
-            try {
-                player.seekTo(0,0);
-            }catch (Exception e){
-                Toast.makeText(playerView.getContext(), "loading... tap too fast", Toast.LENGTH_SHORT).show();
+
+        if(Calendar.getInstance().getTimeInMillis()-last_time<2000) {
+            if(isthread_start==false){
+                quickClick_thread.start();
+                isthread_start=true;
             }
 
-        }else{
-            try {
-                player.seekTo(1,0);
-            }catch (Exception e){
-                Toast.makeText(playerView.getContext(), "tap too fast", Toast.LENGTH_SHORT).show();
-            }
+        }else {
+            workHandler.post(add_video_thread);
+            quickClick_thread=new Thread(detect_quickClick);
+            isthread_start=false;
         }
+
+        last_time=Calendar.getInstance().getTimeInMillis();
 
     }
     void prev_video(){
-
-        try {
-            player.seekTo(0,0);
-        }catch (Exception e){
-            Toast.makeText(playerView.getContext(), "loading... tap too fast", Toast.LENGTH_SHORT).show();
-        }
-
-
         if(video_index>0){
             this.video_index--;
+            jump_to_video(this.video_index);
+
             this.title.setText(episode.episode(video_index).text);
+        }else {
+            Toast.makeText(playerView.getContext(), "start", Toast.LENGTH_SHORT).show();
         }
-
-
-
-        workHandler.post(add_video_thread);
 
     }
     void shift_time(int index,long shift){
